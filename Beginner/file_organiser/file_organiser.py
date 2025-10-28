@@ -19,7 +19,7 @@ def get_files(path: str):
 
     if not p.is_dir():
         f = get_type(path)
-        return print(f"{path} is not a directory, it's a {f}")
+        raise NotADirectoryError(f"{path} is not a directory, it's a {f}")
 
     print(f"{path} is a valid dir")
     for dirpath, subdirs, files in p.walk():
