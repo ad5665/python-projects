@@ -22,7 +22,7 @@ def get_files(path: str):
         f = get_type(path)
         raise NotADirectoryError(f"{path} is not a directory, it's a {f}")
 
-    print(f"{path} is a valid dir")
+    print(f"[yellow][u]{path}[/u] [green]is a valid dir")
     for dirpath, subdirs, files in p.walk():
         for f in files:
             yield dirpath / f
