@@ -1,9 +1,8 @@
 #!/usr/bin/env python3
 
 import pytest
-from ..file_organiser import process_files
-from ..file_organiser import get_files
-from ..file_organiser import get_type
+
+from file_organiser import get_files, get_type, process_files
 
 
 def test_path():

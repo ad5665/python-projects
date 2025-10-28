@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
 
+import argparse
+from collections import Counter
 from pathlib import Path
+
+import magic
 from rich import print
 from rich.progress import track
-from collections import Counter
-import magic
-import argparse
 
 
 # Using python-magic, determine what type of file is passed
@@ -42,9 +43,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         prog="File Organiser", description="Scans a dir and presents types of files"
     )
-    parser.add_argument(
-        "dir", type=str, help="Provide a Windows or Unix directory path"
-    )
+    parser.add_argument("dir", type=str, help="Provide a Windows or Unix directory path")
 
     args = parser.parse_args()
 
