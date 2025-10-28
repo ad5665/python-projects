@@ -7,6 +7,7 @@ from collections import Counter
 import magic
 import argparse
 
+
 # Using python-magic, determine what type of file is passed
 def get_type(file):
     type = magic.from_file(file, mime=True)
@@ -35,22 +36,17 @@ def process_files(path: str):
     print(count)
     return count
 
+
 if __name__ == "__main__":
     # Define argument for dir
     parser = argparse.ArgumentParser(
         prog="File Organiser", description="Scans a dir and presents types of files"
     )
-    parser.add_argument("dir", type=str, help="Provide a Windows or Unix directory path")
+    parser.add_argument(
+        "dir", type=str, help="Provide a Windows or Unix directory path"
+    )
 
     args = parser.parse_args()
 
     # Call Process files with the suppiled argument
     process_files(args.dir)
-
-
-
-#print(emoji.emojize("Python is :airplane:"))
-#print(emoji.emojize(":airplane:"))
-#print(emoji.emojize(":airplane:"))
-#print(emoji.emojize(":airplane:"))
-#print(emoji.emojize(":airplane:"))
