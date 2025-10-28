@@ -3,6 +3,7 @@
 import pytest
 from ..file_organiser import process_files
 from ..file_organiser import get_files
+from ..file_organiser import get_type
 
 
 def test_path():
@@ -13,3 +14,8 @@ def test_path():
 def test_not_dir():
     with pytest.raises(NotADirectoryError, match="is not a directory"):
         list(get_files("/tmp/file-org/text.txt"))
+
+
+def test_get_image():
+    type = get_type("/mnt/c/Users/Adam/Desktop/adhd/20250820_160657.jpg")
+    assert type == "image/jpeg"
