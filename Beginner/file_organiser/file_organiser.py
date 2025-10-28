@@ -33,7 +33,7 @@ def process_files(path: str):
     count = Counter()
     for f in track(get_files(path), description="Working...."):
         count[get_type(f)] += 1
-    print(count)
+    print(f"[bold cyan]{count}")
     return count
 
 
