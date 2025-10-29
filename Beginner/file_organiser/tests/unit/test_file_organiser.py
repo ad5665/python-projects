@@ -6,8 +6,9 @@ from file_organiser import main, get_files, get_type, process_files
 
 
 # Test main with args
-def test_path():
-    amount = main(["/mnt/c/Users/Adam/Desktop/adhd/"])
+def test_path(tmp_path):
+    (tmp_path / "file1.txt").touch()
+    amount = main([str(tmp_path)])
     assert amount > 0
 
 
@@ -21,18 +22,22 @@ def test_no_path_recursive():
     assert amount > 0
 
 
-def test_file_not_found():
+def test_file_not_found(tmp_path):
     with pytest.raises(FileNotFoundError, match="does not exist"):
-        list(get_files("/tmp/file-org/not-here"))
+        list(get_files(tmp_path / "not-here"))
 
 
-def test_not_dir():
+def test_not_dir(tmp_path):
+    file = tmp_path / "text.txt"
+    file.touch()
     with pytest.raises(NotADirectoryError, match="is not a directory"):
-        list(main(["/tmp/file-org/text.txt"]))
+        list(main([str(file)]))
 
 
-def test_with_file():
-    file_type = main(["--file", "/mnt/c/Users/Adam/Desktop/adhd/20250820_160657.jpg"])
+def test_with_file(tmp_path):
+    fake_jpeg = tmp_path / "test.jpg"
+    fake_jpeg.write_bytes(b'\xff\xd8\xff\xe0')
+    file_type = main(["--file", str(fake_jpeg)])
     assert file_type == "image/jpeg"
 
 
@@ -80,15 +85,17 @@ def test_process_files_recursive(tmp_path):
 
 
 # Test get_type
-def test_get_type_image():
-    type = get_type("/mnt/c/Users/Adam/Desktop/adhd/20250820_160657.jpg")
+def test_get_type_image(tmp_path):
+    fake_jpeg = tmp_path / "test.jpg"
+    fake_jpeg.write_bytes(b'\xff\xd8\xff\xe0')
+    type = get_type(str(fake_jpeg))
     assert type == "image/jpeg"
 
 
-def test_get_type_with_temp_file():
+def test_get_type_with_temp_file(tmp_path):
     # Create a dummy txt file
     txt_content = b"This is a dummy text file."
-    txt_file = "/tmp/dummy.txt"
+    txt_file = tmp_path / "dummy.txt"
     with open(txt_file, "wb") as f:
         f.write(txt_content)
     # test with get_type
