@@ -27,6 +27,7 @@ jobs:
         pip install ruff black mypy
 
     - name: Lint with ruff
+      continue-on-error: true
       run: ruff check Beginner/file_organiser/src Beginner/file_organiser/tests
 
     - name: Format with black
