@@ -61,7 +61,7 @@ def parse_args(argv=None):
         "-n",
         "--no-recursive",
         action="store_true",
-        help="(future) disable recursion if you add non-recursive mode",
+        help="Disable recursion if you add non-recursive mode",
     )
     ap.add_argument("--list", action="store_true", help="(future) list files with detected MIME")
     return ap.parse_args(argv)
@@ -70,11 +70,13 @@ def parse_args(argv=None):
 def main(argv=None) -> int:
     args = parse_args(argv)
     if args.file:
-        print(f"[bold cyan]The file {args.file} is a [yellow]{get_type(args.file)}")
+        file_type = get_type(args.file)
+        print(f"[bold cyan]The file {args.file} is a [yellow]{file_type}")
+        return file_type
     else:
         counts = process_files(args.dir, args.no_recursive)
-        print(f"[bold cyan]{counts}")
-    return 0
+        print(f"[bold cyan]{counts}[/bold cyan]")
+        return counts
 
 
 if __name__ == "__main__":
