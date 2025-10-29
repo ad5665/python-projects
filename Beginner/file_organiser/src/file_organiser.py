@@ -14,7 +14,9 @@ def get_type(file_path: Path | str) -> str:
     try:
         return magic.from_file(file_path, mime=True)
     except Exception:
-        return print(f"Failed to generate type of file for {file_path}")
+        msg = f"[red]Failed to generate type of file for {file_path}"
+        print(msg)
+        return msg
 
 
 # Using a path, return all files, using full Path and filename from Path.Walk()
