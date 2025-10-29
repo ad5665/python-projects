@@ -18,10 +18,12 @@ def get_type(file_path: Path | str) -> str:
 
 
 # Using a path, return all files, using full Path and filename from Path.Walk()
-def get_files(path: str):
+def get_files(path: Path | str, recursive=False):
     p = Path(path)
 
-    if not p.is_dir():
+    if not p.exists():  # If the path doesn't exist, throw a error
+        raise FileNotFoundError(f"{path} does not exist")
+    if not p.is_dir():  # If not a dir, catpure file type and throw a error
         f = get_type(path)
         raise NotADirectoryError(f"{path} is not a directory, it's a {f}")
 
