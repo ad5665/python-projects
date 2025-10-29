@@ -10,9 +10,11 @@ from rich.progress import track
 
 
 # Using python-magic, determine what type of file is passed
-def get_type(file):
-    type = magic.from_file(file, mime=True)
-    return type
+def get_type(file_path: Path | str) -> str:
+    try:
+        return magic.from_file(file_path, mime=True)
+    except Exception:
+        return print(f"Failed to generate type of file for {file_path}")
 
 
 # Using a path, return all files, using full Path and filename from Path.Walk()
