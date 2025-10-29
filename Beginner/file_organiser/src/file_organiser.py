@@ -67,7 +67,6 @@ def parse_args(argv=None):
 
 def main(argv=None) -> int:
     args = parse_args(argv)
-    print(args)
     if args.file:
         print(f"[bold cyan]The file {args.file} is a [yellow]{get_type(args.file)}")
     else:
