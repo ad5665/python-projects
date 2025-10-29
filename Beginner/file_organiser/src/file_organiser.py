@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 
 import argparse
-import os
 from collections import Counter
 from pathlib import Path
 
@@ -52,7 +51,7 @@ def parse_args(argv=None):
         "dir",
         type=Path,
         nargs="?",
-        default=os.getcwd(),
+        default=Path.cwd(),
         help="Provide a Windows or Unix directory path, default is working directory",
     )
     ap.add_argument("-f", "--file", type=Path, help="Provide a Windows or Unix file path")
