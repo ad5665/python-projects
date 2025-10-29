@@ -36,7 +36,7 @@ def test_not_dir(tmp_path):
 
 def test_with_file(tmp_path):
     fake_jpeg = tmp_path / "test.jpg"
-    fake_jpeg.write_bytes(b'\xff\xd8\xff\xe0')
+    fake_jpeg.write_bytes(b"\xff\xd8\xff\xe0")
     file_type = main(["--file", str(fake_jpeg)])
     assert file_type == "image/jpeg"
 
@@ -87,7 +87,7 @@ def test_process_files_recursive(tmp_path):
 # Test get_type
 def test_get_type_image(tmp_path):
     fake_jpeg = tmp_path / "test.jpg"
-    fake_jpeg.write_bytes(b'\xff\xd8\xff\xe0')
+    fake_jpeg.write_bytes(b"\xff\xd8\xff\xe0")
     type = get_type(str(fake_jpeg))
     assert type == "image/jpeg"
 
