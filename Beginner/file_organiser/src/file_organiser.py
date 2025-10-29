@@ -64,3 +64,18 @@ def parse_args(argv=None):
     ap.add_argument("--list", action="store_true", help="(future) list files with detected MIME")
     return ap.parse_args(argv)
 
+
+def main(argv=None) -> int:
+    args = parse_args(argv)
+    print(args)
+    if args.file:
+        print(f"[bold cyan]The file {args.file} is a [yellow]{get_type(args.file)}")
+    else:
+        counts = process_files(args.dir, args.no_recursive)
+        print(f"[bold cyan]{counts}")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
+
