@@ -11,12 +11,7 @@ from rich.progress import track
 
 # Using python-magic, determine what type of file is passed
 def get_type(file_path: Path | str) -> str:
-    try:
-        return magic.from_file(file_path, mime=True)
-    except Exception:
-        msg = f"[red]Failed to generate type of file for {file_path}"
-        print(msg)
-        return msg
+    return magic.from_file(file_path, mime=True)
 
 
 # Using a path, return all files, using full Path and filename from Path.Walk()
@@ -41,7 +36,12 @@ def get_files(path: Path | str, recursive=False):
 def process_files(path: Path | str, recursive=False):
     counts = Counter()
     for f in track(get_files(path, recursive), description="Working...."):
-        counts[get_type(f)] += 1
+        try:
+            file_type = get_type(f)
+        except Exception:
+            print(f"[red]Failed to generate type of file for {f}")
+            continue
+        counts[file_type] += 1
     return counts
 
 
@@ -76,7 +76,7 @@ def main(argv=None) -> int:
     else:
         counts = process_files(args.dir, args.no_recursive)
         print(f"[bold cyan]{counts}[/bold cyan]")
-        return counts
+        return counts.total()
 
 
 if __name__ == "__main__":
