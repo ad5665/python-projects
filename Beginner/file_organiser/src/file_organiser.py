@@ -43,14 +43,24 @@ def process_files(path: Path | str, recursive=False):
     return counts
 
 
-if __name__ == "__main__":
-    # Define argument for dir
-    parser = argparse.ArgumentParser(
+def parse_args(argv=None):
+    ap = argparse.ArgumentParser(
         prog="File Organiser", description="Scans a dir and presents types of files"
     )
-    parser.add_argument("dir", type=str, help="Provide a Windows or Unix directory path")
+    ap.add_argument(
+        "dir",
+        type=Path,
+        nargs="?",
+        default=os.getcwd(),
+        help="Provide a Windows or Unix directory path, default is working directory",
+    )
+    ap.add_argument("-f", "--file", type=Path, help="Provide a Windows or Unix file path")
+    ap.add_argument(
+        "-n",
+        "--no-recursive",
+        action="store_true",
+        help="(future) disable recursion if you add non-recursive mode",
+    )
+    ap.add_argument("--list", action="store_true", help="(future) list files with detected MIME")
+    return ap.parse_args(argv)
 
-    args = parser.parse_args()
-
-    # Call Process files with the suppiled argument
-    process_files(args.dir)
