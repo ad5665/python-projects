@@ -27,10 +27,12 @@ def get_files(path: Path | str, recursive=False):
         f = get_type(path)
         raise NotADirectoryError(f"{path} is not a directory, it's a {f}")
 
-    print(f"[yellow][u]{path}[/u] [green]is a valid dir")
+    print(f"[yellow][u]{p}[/u] [green]is a valid dir")
     for dirpath, subdirs, files in p.walk():
         for f in files:
             yield dirpath / f
+        if recursive:
+            break
 
 
 # This fuction calls the above 2 fuctions, to grab a list of files, and then fetching the file types, saving within a Counter
