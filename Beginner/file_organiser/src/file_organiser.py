@@ -67,7 +67,7 @@ def parse_args(argv=None):
     return ap.parse_args(argv)
 
 
-def main(argv=None) -> int:
+def main(argv=None):
     args = parse_args(argv)
     if args.file:
         file_type = get_type(args.file)
