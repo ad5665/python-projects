@@ -36,12 +36,11 @@ def get_files(path: Path | str, recursive=False):
 
 
 # This fuction calls the above 2 fuctions, to grab a list of files, and then fetching the file types, saving within a Counter
-def process_files(path: str):
-    count = Counter()
-    for f in track(get_files(path), description="Working...."):
-        count[get_type(f)] += 1
-    print(f"[bold cyan]{count}")
-    return count
+def process_files(path: Path | str, recursive=False):
+    counts = Counter()
+    for f in track(get_files(path, recursive), description="Working...."):
+        counts[get_type(f)] += 1
+    return counts
 
 
 if __name__ == "__main__":
