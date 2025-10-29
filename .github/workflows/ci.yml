@@ -1,0 +1,39 @@
+
+name: Python CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r Beginner/file_organiser/requirements.txt
+        pip install ruff black mypy
+
+    - name: Lint with ruff
+      run: ruff check Beginner/file_organiser/src Beginner/file_organiser/tests
+
+    - name: Format with black
+      run: black --check Beginner/file_organiser/src Beginner/file_organiser/tests
+
+    - name: Typecheck with mypy
+      run: mypy Beginner/file_organiser/src
+
+    - name: Test with pytest
+      run: pytest Beginner/file_organiser/tests
