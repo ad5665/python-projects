@@ -11,6 +11,7 @@ runs:
       uses: actions/setup-python@v4
       with:
         python-version: '3.13'
+      shell: bash
 
     - name: Install dependencies
       run: |
@@ -38,6 +39,7 @@ runs:
       shell: bash
 
     - name: Display coverage summary in job summary
+      shell: bash
       run: |
         echo "## Code Coverage Summary for $(echo ${{ inputs.project-path }} | cut -d '/' -f 2)" >> $GITHUB_STEP_SUMMARY
         echo '```' >> $GITHUB_STEP_SUMMARY
