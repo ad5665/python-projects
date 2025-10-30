@@ -1,19 +1,12 @@
-name: Reusable Python CI
-
-on:
-  workflow_call:
-    inputs:
-      project-path:
-        required: true
-        type: string
-
-jobs:
-  build:
-    runs-on: ubuntu-latest
-
-    steps:
-    - uses: actions/checkout@v3
-
+name: 'Python Test Action'
+description: 'A custom action to run tests, lint, format, and typecheck a Python project.'
+inputs:
+  project-path:
+    description: 'The path to the Python project.'
+    required: true
+runs:
+  using: "composite"
+  steps:
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
@@ -24,20 +17,25 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r ${{ inputs.project-path }}/requirements.txt
         pip install ruff black mypy pytest pytest-cov
+      shell: bash
 
     - name: Lint with ruff
       continue-on-error: true
       run: ruff check ${{ inputs.project-path }}/src ${{ inputs.project-path }}/tests
+      shell: bash
 
     - name: Format with black
       run: black --check ${{ inputs.project-path }}/src ${{ inputs.project-path }}/tests
+      shell: bash
 
     - name: Typecheck with mypy
       run: mypy ${{ inputs.project-path }}/src
+      shell: bash
 
     - name: Test with pytest and generate coverage summary
       run: |
         pytest --cov=${{ inputs.project-path }}/src --cov-report=term-missing ${{ inputs.project-path }}/tests > coverage_summary.md
+      shell: bash
 
     - name: Display coverage summary in job summary
       run: |

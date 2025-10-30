@@ -4,11 +4,12 @@ on:
   push:
     branches-ignore:
       - main
-  #pull_request:
-  #  branches: [ "**" ]
 
 jobs:
   file_organiser:
-    uses: ./.github/workflows/tests.yml
-    with:
-      project-path: Beginner/file_organiser
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ./.github/actions/python-test
+        with:
+          project-path: Beginner/file_organiser
