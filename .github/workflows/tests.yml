@@ -42,6 +42,6 @@ jobs:
     - name: Display coverage summary in job summary
       run: |
         echo "## Code Coverage Summary for $(echo ${{ inputs.project-path }} | cut -d '/' -f 2)" >> $GITHUB_STEP_SUMMARY
-        echo "" >> $GITHUB_STEP_SUMMARY
+        echo '```' >> $GITHUB_STEP_SUMMARY
         cat coverage_summary.md >> $GITHUB_STEP_SUMMARY
-        echo "" >> $GITHUB_STEP_SUMMARY
+        echo '```' >> $GITHUB_STEP_SUMMARY
