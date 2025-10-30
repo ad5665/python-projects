@@ -8,6 +8,6 @@ on:
 
 jobs:
   file_organiser:
-    uses: ./.github/workflows/tests.yml@file-org-workflows
+    uses: ./.github/workflows/tests.yml
     with:
       project-path: Beginner/file_organiser
