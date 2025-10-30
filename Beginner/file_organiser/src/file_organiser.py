@@ -60,7 +60,7 @@ def parse_args(argv=None):
     ap.add_argument(
         "-n",
         "--no-recursive",
-        action="store_true",
+        action="store_false",
         help="Disable recursion if you add non-recursive mode",
     )
     ap.add_argument("--list", action="store_true", help="(future) list files with detected MIME")
