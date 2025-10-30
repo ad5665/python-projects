@@ -15,7 +15,7 @@ def get_type(file_path: Path | str) -> str:
 
 
 # Using a path, return all files, using full Path and filename from Path.Walk()
-def get_files(path: Path | str, recursive=False):
+def get_files(path: Path | str, recursive=True):
     p = Path(path)
 
     if not p.exists():  # If the path doesn't exist, throw a error
@@ -28,12 +28,12 @@ def get_files(path: Path | str, recursive=False):
     for dirpath, subdirs, files in p.walk():
         for f in files:
             yield dirpath / f
-        if recursive:
+        if not recursive:
             break
 
 
 # This fuction calls the above 2 fuctions, to grab a list of files, and then fetching the file types, saving within a Counter
-def process_files(path: Path | str, recursive=False):
+def process_files(path: Path | str, recursive=True):
     counts: Counter[str] = Counter()
     for f in track(get_files(path, recursive), description="Working...."):
         try:
