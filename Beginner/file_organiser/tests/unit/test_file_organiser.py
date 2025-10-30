@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 
-import pytest
 from collections import Counter
+
+import pytest
 
 from file_organiser import get_files, get_type, main, process_files
 
