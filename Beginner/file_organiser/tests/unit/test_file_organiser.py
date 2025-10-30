@@ -173,7 +173,7 @@ def test_main_as_script(tmp_path):
     file_organiser_dir = Path(__file__).parent.parent.parent
 
     result = subprocess.run(
-        ["python", "src/file_organiser.py", str(tmp_path)],
+        ["coverage", "run", "--append", "src/file_organiser.py", str(tmp_path)],
         capture_output=True,
         text=True,
         cwd=str(file_organiser_dir),
