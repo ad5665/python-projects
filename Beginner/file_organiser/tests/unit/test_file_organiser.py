@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 
+import subprocess
 from collections import Counter
+from pathlib import Path
 
 import pytest
 
@@ -121,6 +123,19 @@ def test_process_files_non_recursive(tmp_path):
     assert counts == Counter({"text/plain": 1})
 
 
+def test_process_files_exception(tmp_path, monkeypatch):
+    """Test process_files with an exception during file type retrieval."""
+    (tmp_path / "file1.txt").touch()
+
+    def mock_get_type(path):
+        raise Exception("Test exception")
+
+    monkeypatch.setattr("file_organiser.get_type", mock_get_type)
+
+    counts = process_files(tmp_path)
+    assert counts.total() == 0
+
+
 # Test get_type
 def test_get_type_image(tmp_path):
     """Test get_type with an image file."""
@@ -148,3 +163,19 @@ def test_get_type_empty_file(tmp_path):
     empty_file.touch()
     file_type = get_type(empty_file)
     assert file_type == "inode/x-empty"
+
+
+def test_main_as_script(tmp_path):
+    """Test running the script as the main program."""
+    (tmp_path / "file1.txt").touch()
+
+    # Get the path to the Beginner/file_organiser directory
+    file_organiser_dir = Path(__file__).parent.parent.parent
+
+    result = subprocess.run(
+        ["python", "src/file_organiser.py", str(tmp_path)],
+        capture_output=True,
+        text=True,
+        cwd=str(file_organiser_dir),
+    )
+    assert result.returncode == 1
