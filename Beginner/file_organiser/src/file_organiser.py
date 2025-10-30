@@ -15,7 +15,7 @@ def get_type(file_path: Path | str) -> str:
 
 
 # Using a path, return all files, using full Path and filename from Path.Walk()
-def get_files(path: Path | str, recursive=False):
+def get_files(path: Path | str, recursive=True):
     p = Path(path)
 
     if not p.exists():  # If the path doesn't exist, throw a error
@@ -28,13 +28,13 @@ def get_files(path: Path | str, recursive=False):
     for dirpath, subdirs, files in p.walk():
         for f in files:
             yield dirpath / f
-        if recursive:
+        if not recursive:
             break
 
 
 # This fuction calls the above 2 fuctions, to grab a list of files, and then fetching the file types, saving within a Counter
-def process_files(path: Path | str, recursive=False):
-    counts = Counter()
+def process_files(path: Path | str, recursive=True):
+    counts: Counter[str] = Counter()
     for f in track(get_files(path, recursive), description="Working...."):
         try:
             file_type = get_type(f)
@@ -60,14 +60,14 @@ def parse_args(argv=None):
     ap.add_argument(
         "-n",
         "--no-recursive",
-        action="store_true",
+        action="store_false",
         help="Disable recursion if you add non-recursive mode",
     )
     ap.add_argument("--list", action="store_true", help="(future) list files with detected MIME")
     return ap.parse_args(argv)
 
 
-def main(argv=None) -> int:
+def main(argv=None):
     args = parse_args(argv)
     if args.file:
         file_type = get_type(args.file)

@@ -1,0 +1,6 @@
+[run]
+source = src
+parallel = true
+
+[report]
+show_missing = true

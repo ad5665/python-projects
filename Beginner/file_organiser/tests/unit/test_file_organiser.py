@@ -1,43 +1,68 @@
 #!/usr/bin/env python3
 
+import subprocess
+from collections import Counter
+from pathlib import Path
+
 import pytest
 
-from file_organiser import main, get_files, get_type, process_files
+from file_organiser import get_files, get_type, main, process_files
 
 
-# Test main with args
-def test_path():
-    amount = main(["/mnt/c/Users/Adam/Desktop/adhd/"])
-    assert amount > 0
+# Test main
+def test_path(tmp_path):
+    """Test main with a directory containing one file, expecting 1 file to be processed."""
+    (tmp_path / "file1.txt").touch()
+    amount = main([str(tmp_path)])
+
+    assert amount == 1
 
 
-def test_no_path():
+def test_main_empty_dir(tmp_path):
+    """Test main with an empty directory, should process 0 files."""
+    amount = main([str(tmp_path)])
+    assert amount == 0
+
+
+def test_main_no_path(tmp_path, monkeypatch):
+    """Test main with no path, which should default to the current directory."""
+    monkeypatch.chdir(tmp_path)
+    (tmp_path / "file1.txt").touch()
     amount = main([])
-    assert amount > 0
+    assert amount == 1
 
 
-def test_no_path_recursive():
-    amount = main(["--no-recursive"])
-    assert amount > 0
+def test_main_file_not_found():
+    """Test main with a non-existent file path."""
+    with pytest.raises(FileNotFoundError):
+        main(["/non/existent/path"])
 
 
-def test_file_not_found():
-    with pytest.raises(FileNotFoundError, match="does not exist"):
-        list(get_files("/tmp/file-org/not-here"))
-
-
-def test_not_dir():
+def test_not_dir(tmp_path):
+    """Test main with a non-directory path."""
+    file = tmp_path / "text.txt"
+    file.touch()
     with pytest.raises(NotADirectoryError, match="is not a directory"):
-        list(main(["/tmp/file-org/text.txt"]))
+        list(main([str(file)]))
 
 
-def test_with_file():
-    file_type = main(["--file", "/mnt/c/Users/Adam/Desktop/adhd/20250820_160657.jpg"])
+def test_with_file(tmp_path):
+    """Test main with a file path."""
+    fake_jpeg = tmp_path / "test.jpg"
+    fake_jpeg.write_bytes(b"\xff\xd8\xff\xe0")
+    file_type = main(["--file", str(fake_jpeg)])
     assert file_type == "image/jpeg"
 
 
 # Test get_files
+def test_file_not_found(tmp_path):
+    """Test get_files with a non-existent file path."""
+    with pytest.raises(FileNotFoundError, match="does not exist"):
+        list(get_files(tmp_path / "not-here"))
+
+
 def test_get_files_recursive(tmp_path):
+    """Test get_files with recursive mode enabled."""
     # Create a dummy directory structure
     (tmp_path / "subdir1").mkdir()
     (tmp_path / "subdir2").mkdir()
@@ -54,7 +79,7 @@ def test_get_files_recursive(tmp_path):
 
 
 def test_get_files_non_recursive(tmp_path):
-    # Create a dummy directory structure
+    """Test get_files with non-recursive mode enabled."""
     (tmp_path / "subdir1").mkdir()
     (tmp_path / "subdir2").mkdir()
     (tmp_path / "file1.txt").touch()
@@ -62,12 +87,20 @@ def test_get_files_non_recursive(tmp_path):
     (tmp_path / "subdir2" / "file3.pdf").touch()
 
     # Test non-recursive behavior
-    files = list(get_files(tmp_path, recursive=True))
+    files = list(get_files(tmp_path, recursive=False))
     assert len(files) == 1
     assert tmp_path / "file1.txt" in files
 
 
+def test_get_files_empty_dir(tmp_path):
+    """Test get_files with an empty directory."""
+    files = list(get_files(tmp_path))
+    assert len(files) == 0
+
+
+# Test process_files
 def test_process_files_recursive(tmp_path):
+    """Test process_files with recursive mode enabled."""
     # Create dummy files with different types
     (tmp_path / "file1.txt").write_text("hello")
     (tmp_path / "file2.jpg").touch()  # python-magic will likely identify this as empty data
@@ -79,18 +112,70 @@ def test_process_files_recursive(tmp_path):
     assert counts["text/plain"] == 1
 
 
+def test_process_files_non_recursive(tmp_path):
+    """Test process_files with non-recursive mode enabled."""
+    # Create dummy files
+    (tmp_path / "file1.txt").write_text("hello")
+    (tmp_path / "subdir").mkdir()
+    (tmp_path / "subdir" / "file2.txt").write_text("world")
+
+    counts = process_files(tmp_path, recursive=False)
+    assert counts == Counter({"text/plain": 1})
+
+
+def test_process_files_exception(tmp_path, monkeypatch):
+    """Test process_files with an exception during file type retrieval."""
+    (tmp_path / "file1.txt").touch()
+
+    def mock_get_type(path):
+        raise Exception("Test exception")
+
+    monkeypatch.setattr("file_organiser.get_type", mock_get_type)
+
+    counts = process_files(tmp_path)
+    assert counts.total() == 0
+
+
 # Test get_type
-def test_get_type_image():
-    type = get_type("/mnt/c/Users/Adam/Desktop/adhd/20250820_160657.jpg")
+def test_get_type_image(tmp_path):
+    """Test get_type with an image file."""
+    fake_jpeg = tmp_path / "test.jpg"
+    fake_jpeg.write_bytes(b"\xff\xd8\xff\xe0")
+    type = get_type(str(fake_jpeg))
     assert type == "image/jpeg"
 
 
-def test_get_type_with_temp_file():
+def test_get_type_with_temp_file(tmp_path):
+    """Test get_type with a temporary file."""
     # Create a dummy txt file
     txt_content = b"This is a dummy text file."
-    txt_file = "/tmp/dummy.txt"
+    txt_file = tmp_path / "dummy.txt"
     with open(txt_file, "wb") as f:
         f.write(txt_content)
     # test with get_type
     type = get_type(txt_file)
     assert type == "text/plain"
+
+
+def test_get_type_empty_file(tmp_path):
+    """Test get_type with an empty file."""
+    empty_file = tmp_path / "empty.dat"
+    empty_file.touch()
+    file_type = get_type(empty_file)
+    assert file_type == "inode/x-empty"
+
+
+def test_main_as_script(tmp_path):
+    """Test running the script as the main program."""
+    (tmp_path / "file1.txt").touch()
+
+    # Get the path to the Beginner/file_organiser directory
+    file_organiser_dir = Path(__file__).parent.parent.parent
+
+    result = subprocess.run(
+        ["coverage", "run", "--append", "src/file_organiser.py", str(tmp_path)],
+        capture_output=True,
+        text=True,
+        cwd=str(file_organiser_dir),
+    )
+    assert result.returncode == 1

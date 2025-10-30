@@ -1,0 +1,17 @@
+name: file-organiser-test
+
+on:
+  push:
+    branches-ignore:
+      - main
+    paths:
+      - "Beginner/file_organiser/**"
+
+jobs:
+  file_organiser:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ./.github/actions/python-test
+        with:
+          project-path: Beginner/file_organiser
