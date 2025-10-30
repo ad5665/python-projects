@@ -1,0 +1,14 @@
+name: file-organiser-test
+
+on:
+  push:
+    branches-ignore:
+      - main
+  #pull_request:
+  #  branches: [ "**" ]
+
+jobs:
+  file_organiser:
+    uses: ./.github/workflows/actions/tests.yml
+    with:
+      project-path: Beginner/file_organiser
