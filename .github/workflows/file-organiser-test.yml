@@ -9,6 +9,6 @@ on:
 
 jobs:
   file_organiser:
-    uses: ./.github/workflows/actions/tests.yml
+    uses: ./.github/workflows/tests.yml
     with:
       project-path: Beginner/file_organiser
