@@ -4,6 +4,8 @@ on:
   push:
     branches-ignore:
       - main
+    paths:
+      - "Beginner/file_organiser/**"
 
 jobs:
   file_organiser:
